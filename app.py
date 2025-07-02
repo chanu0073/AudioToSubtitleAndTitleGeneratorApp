@@ -4,6 +4,7 @@ from whisper.utils import get_writer
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
 import io
+import tempfile
 
 # Load models
 @st.cache_resource
@@ -24,12 +25,12 @@ if audio_file is not None:
     st.success("✅ File uploaded successfully!")
 
     if st.button("Generate Subtitles & Titles"):
-        # Save file to temp location in memory
-        with open(audio_file.name, "wb") as f:
-            f.write(audio_file.read())
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_audio:
+            tmp_audio.write(audio_file.read())
+            tmp_audio_path = tmp_audio.name
 
         # Transcription in English
-        result = whisper_model.transcribe(audio_file.name, language="en")
+        result = whisper_model.transcribe(tmp_audio_path, language="en")
         transcript = result["text"]
 
         if not transcript.strip():
@@ -39,7 +40,7 @@ if audio_file is not None:
             srt_buffer = io.StringIO()
             writer = get_writer("srt", ".")
             writer.write_result(result, srt_buffer)
-            srt_buffer.seek(0)
+            srt_content = srt_buffer.getvalue()
 
             st.success("✅ Subtitles generated!")
 
@@ -58,9 +59,9 @@ if audio_file is not None:
             )
             titles = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
 
-            # Subtitles download
+            # Subtitles download button
             st.markdown("### 📄 Download Subtitles (.srt):")
-            st.download_button("📥 Download .srt file", srt_buffer, file_name="subtitles.srt")
+            st.download_button("📥 Download .srt file", srt_content, file_name="subtitles.srt")
 
             # Show titles
             st.markdown("### 📝 Generated Video Titles:")
@@ -68,4 +69,4 @@ if audio_file is not None:
                 st.write(f"{i}. {title}")
 
         # Clean up temp audio file
-        os.remove(audio_file.name)
+        os.remove(tmp_audio_path)
