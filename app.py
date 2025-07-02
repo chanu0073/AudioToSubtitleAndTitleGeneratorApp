@@ -1,20 +1,9 @@
-import os
-
-# Set FFmpeg binary path manually if not in system PATH
-os.environ["PATH"] += os.pathsep + r"C:\ffmpeg\bin"
-
 import streamlit as st
 import whisper
 from whisper.utils import get_writer
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
-import subprocess
-
-# Check FFmpeg availability
-try:
-    subprocess.run(["ffmpeg", "-version"], check=True, capture_output=True)
-except FileNotFoundError:
-    st.error("FFmpeg not found! Please install FFmpeg and add it to your system PATH.")
+import io
 
 # Load models
 @st.cache_resource
@@ -32,28 +21,27 @@ st.title("🎙️ Audio to Subtitle & Title Generator")
 audio_file = st.file_uploader("Upload your audio file (.mp3, .wav, .m4a)", type=["mp3", "wav", "m4a"])
 
 if audio_file is not None:
-    with open(audio_file.name, "wb") as f:
-        f.write(audio_file.read())
-
     st.success("✅ File uploaded successfully!")
 
     if st.button("Generate Subtitles & Titles"):
-        # Load audio and check for empty content
-        audio = whisper.load_audio(audio_file.name)
-        if len(audio) == 0:
-            st.error("❌ The uploaded audio file is empty. Please upload a valid audio.")
+        # Save file to temp location in memory
+        with open(audio_file.name, "wb") as f:
+            f.write(audio_file.read())
+
+        # Transcription in English
+        result = whisper_model.transcribe(audio_file.name, language="en")
+        transcript = result["text"]
+
+        if not transcript.strip():
+            st.error("❌ No speech detected in the audio.")
         else:
-            # Transcription in English
-            result = whisper_model.transcribe(audio_file.name, language="en")
-            transcript = result["text"]
+            # Save subtitles to string buffer
+            srt_buffer = io.StringIO()
+            writer = get_writer("srt", ".")
+            writer.write_result(result, srt_buffer)
+            srt_buffer.seek(0)
 
-            # Save subtitles (.srt)
-            srt_path = "subtitles.srt"
-            with open(srt_path, "w", encoding="utf-8") as f:
-                writer = get_writer("srt", ".")
-                writer.write_result(result, f)
-
-            st.success("Subtitles generated!")
+            st.success("✅ Subtitles generated!")
 
             # Title generation
             prompt = f"Generate 5 engaging YouTube video titles for this video transcript:\n\n{transcript}\n\nTitles:"
@@ -71,15 +59,13 @@ if audio_file is not None:
             titles = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
 
             # Subtitles download
-            st.markdown("### Generated Subtitles (.srt):")
-            with open(srt_path, "rb") as f:
-                st.download_button("Download .srt file", f, file_name="subtitles.srt")
+            st.markdown("### 📄 Download Subtitles (.srt):")
+            st.download_button("📥 Download .srt file", srt_buffer, file_name="subtitles.srt")
 
             # Show titles
-            st.markdown("### Generated Video Titles:")
+            st.markdown("### 📝 Generated Video Titles:")
             for i, title in enumerate(titles, 1):
                 st.write(f"{i}. {title}")
 
-            # Clean up temp files
-            os.remove(audio_file.name)
-            os.remove(srt_path)
+        # Clean up temp audio file
+        os.remove(audio_file.name)
