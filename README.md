@@ -15,21 +15,6 @@ A Streamlit web app that transcribes audio files into subtitles and generates en
 
 ---
 
-## 📁 Project Structure
-
-AudioToSubtitleAndTitleGeneratorApp/
-├── .devcontainer/
-│   └── devcontainer.json
-├── app.py # Main Streamlit app file
-├── requirements.txt # Python package dependencies
-├── sample_files/
-│ ├── test_audio.mp3 # Sample test audio file
-│ └── test_audio_subtitles.srt # Generated sample subtitles
-├── README.md # Project documentation
-└── .gitignore # Files/folders to ignore in git
-
----
-
 ## 🚀 How to Run Locally
 
 1️⃣ **Clone the repository**
@@ -39,7 +24,9 @@ cd AudioToSubtitleAndTitleGeneratorApp
 2️⃣ Create and activate a virtual environment
 python -m venv venv
 venv\Scripts\activate    # On Windows
+
 or
+
 source venv/bin/activate # On Mac/Linux
 
 3️⃣ Install dependencies
@@ -66,13 +53,9 @@ You can try running the app with this file to instantly see how it works.
 📦 Dependencies
 
 streamlit
-
 openai-whisper
-
 transformers
-
 torch
-
 ffmpeg (must be available in system PATH)
 
 Install them via:
@@ -80,11 +63,13 @@ Install them via:
 pip install -r requirements.txt
 
 🌐 Deployment
+
 The app is deployed on Streamlit Community Cloud.
 
 Visit: https://audiotosubtitleandtitlegeneratorapp-n8gpnjkugs5araesn7rap3.streamlit.app/
 
-📌 Future Work
+## 📌 Future Work
+
 While the project successfully implements an Audio to Subtitle and Title Generator system using Whisper and FLAN-T5 models, there are several promising directions for future enhancement:
 
 • Multi-language Transcription Support:
