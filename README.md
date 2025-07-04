@@ -39,7 +39,7 @@ cd AudioToSubtitleAndTitleGeneratorApp
 2️⃣ Create and activate a virtual environment
 python -m venv venv
 venv\Scripts\activate    # On Windows
-# or
+or
 source venv/bin/activate # On Mac/Linux
 
 3️⃣ Install dependencies
@@ -56,23 +56,32 @@ If you're using VS Code, you can simply "Reopen in Container" to get started.
 
 📄 Sample Files
 Check out the sample_files/ folder:
+
 test_audio.mp3 — A sample audio file for quick testing.
+
 test_audio_subtitles.srt — Subtitles generated for the sample audio.
 
 You can try running the app with this file to instantly see how it works.
 
 📦 Dependencies
+
 streamlit
+
 openai-whisper
+
 transformers
+
 torch
+
 ffmpeg (must be available in system PATH)
 
 Install them via:
+
 pip install -r requirements.txt
 
 🌐 Deployment
 The app is deployed on Streamlit Community Cloud.
+
 Visit: https://audiotosubtitleandtitlegeneratorapp-n8gpnjkugs5araesn7rap3.streamlit.app/
 
 📌 Future Work
