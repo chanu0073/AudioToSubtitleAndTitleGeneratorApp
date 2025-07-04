@@ -6,6 +6,7 @@ import torch
 import io
 import tempfile
 import os
+import time
 
 # Load models
 @st.cache_resource
@@ -26,11 +27,20 @@ if audio_file is not None:
     st.success("✅ File uploaded successfully!")
 
     if st.button("Generate Subtitles & Titles"):
+        # Display progress bar
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        progress_bar.progress(5)
+        status_text.text("Processing audio file...")
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_audio:
             tmp_audio.write(audio_file.read())
             tmp_audio_path = tmp_audio.name
 
         try:
+            progress_bar.progress(15)
+            status_text.text("Transcribing audio to text...")
+
             # Transcription in English
             result = whisper_model.transcribe(tmp_audio_path, language="en")
             transcript = result["text"]
@@ -38,13 +48,17 @@ if audio_file is not None:
             if not transcript.strip():
                 st.error("❌ No speech detected in the audio.")
             else:
+                progress_bar.progress(50)
+                status_text.text("Generating subtitles...")
+
                 # Save subtitles to string buffer
                 srt_buffer = io.StringIO()
                 writer = get_writer("srt", ".")
                 writer.write_result(result, srt_buffer)
                 srt_content = srt_buffer.getvalue()
 
-                st.success("✅ Subtitles generated!")
+                progress_bar.progress(70)
+                status_text.text("Generating video titles...")
 
                 # Title generation
                 prompt = f"Generate 5 engaging YouTube video titles for this video transcript:\n\n{transcript}\n\nTitles:"
@@ -61,12 +75,15 @@ if audio_file is not None:
                 )
                 titles = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
 
+                progress_bar.progress(100)
+                status_text.text("✅ Subtitles and Titles generated successfully!")
+
                 # Subtitles download button
-                st.markdown("### 📄 Download Subtitles (.srt):")
-                st.download_button("📥 Download .srt file", srt_content, file_name="subtitles.srt")
+                st.markdown("### Download Subtitles (.srt):")
+                st.download_button("Download .srt file", srt_content, file_name="subtitles.srt")
 
                 # Show titles
-                st.markdown("### 📝 Generated Video Titles:")
+                st.markdown("### Generated Video Titles:")
                 for i, title in enumerate(titles, 1):
                     st.write(f"{i}. {title}")
 
@@ -74,3 +91,7 @@ if audio_file is not None:
             # Ensure file is removed even if errors occur
             if os.path.exists(tmp_audio_path):
                 os.remove(tmp_audio_path)
+
+        # Remove progress bar after everything is done
+        progress_bar.empty()
+        status_text.empty()
