@@ -23,7 +23,9 @@ git clone https://github.com/chanu0073/AudioToSubtitleAndTitleGeneratorApp.git
 cd AudioToSubtitleAndTitleGeneratorApp
 
 2️⃣ Create and activate a virtual environment
+
 python -m venv venv
+
 venv\Scripts\activate    # On Windows
 
 or
