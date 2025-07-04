@@ -53,10 +53,15 @@ You can try running the app with this file to instantly see how it works.
 📦 Dependencies
 
 streamlit
+
 openai-whisper
+
 transformers
+
 torch
+
 ffmpeg (must be available in system PATH)
+
 
 Install them via:
 
