@@ -19,6 +19,7 @@ A Streamlit web app that transcribes audio files into subtitles and generates en
 
 1️⃣ **Clone the repository**
 git clone https://github.com/chanu0073/AudioToSubtitleAndTitleGeneratorApp.git
+
 cd AudioToSubtitleAndTitleGeneratorApp
 
 2️⃣ Create and activate a virtual environment
