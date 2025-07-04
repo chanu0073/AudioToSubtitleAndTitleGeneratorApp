@@ -92,6 +92,8 @@ This project is open source and available under the MIT License.
 
 ✨ Acknowledgements
 OpenAI Whisper : https://github.com/openai/whisper
+
 HuggingFace Transformers : https://huggingface.co/docs/transformers/index
+
 Streamlit : https://streamlit.io/
 
