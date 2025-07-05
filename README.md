@@ -3,6 +3,40 @@
 A Streamlit web app that transcribes audio files into subtitles and generates engaging video titles using Generative AI models. Built with Whisper (OpenAI) for transcription and FLAN-T5 for title generation via HuggingFace Transformers.
 
 ---
+## 📁 Project Structure
+
+AudioToSubtitleAndTitleGeneratorApp/
+
+├── .devcontainer/
+
+│   └── devcontainer.json             # VS Code Dev Container config for isolated environment
+
+├── app.py                            # Main Streamlit app file
+
+├── requirements.txt                  # Python package dependencies
+
+├── packages.txt                      # System package dependencies (like FFmpeg)
+
+├── sample_files/
+
+│   ├── test_audio.mp3                # Sample test audio file
+
+│   └── test_audio_subtitles.srt      # Generated sample subtitles
+
+├── sample_output/
+
+│   ├── screenshot1.png
+
+│   ├── screenshot2.png
+
+│   ├── ...
+
+│   └── screenshot12.png              # Screenshots demonstrating app usage and output
+
+├── README.md                         # Project documentation
+
+├── .gitignore                        # Files/folders to ignore in Git
+
 
 ## 📌 Features
 
